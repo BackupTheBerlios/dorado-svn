@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<processing>
+	<job name="Installation-Tasks">
+		<os family="unix" />
+		<executefile name="$INSTALL_PATH/installer/bin/dorado-installer.sh"/>
+	</job>
+	
+	<job name="Installation-Tasks">		
+		<os family="mac" />
+		<executefile name="$INSTALL_PATH/installer/bin/dorado-installer.sh"/>
+	</job>
+		
+	<job name="Installation-Tasks">
+		<os family="windows" />
+		<executefile name="$INSTALL_PATH/installer/bin/dorado-installer.bat"/>
+	</job>
+</processing>

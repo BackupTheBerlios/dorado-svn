@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<langpack>
+	<str id="panel0.title" 
+		txt="Einstellungen (Seite 1/1)"/>
+	<str id="panel0.field1.description">
+Geben Sie hier das Home-Verzeichnis einer Tomcat-Installation ein.
+Befindet sich dort keine gültige Tomcat-Installation, dann 
+wird die aktuelle Tomcat-Version geladen und in das angegebene Verzeichnis
+installiert.
+	</str>
+	<str id="panel0.field1.label"
+		txt="Tomcat-Home:"/>
+	<str id="panel0.field2.description">
+Geben Sie hier das Base-Verzeichnis einer Tomcat-Installation ein.
+Wenn Sie das Feld leer lassen (standard), dann wird das Verzeichnis 
+von Tomcat-Home genutzt.
+	</str>
+	<str id="panel0.field2.label"
+		txt="Tomcat-Base:"/>
+	<str id="panel0.field3.description">
+Geben Sie hier das Minimum und Maximum des verübgaren Speichers an, 
+die der Tomcat nutzen darf.
+	</str>
+	<str id="panel0.field3.label"
+		txt="Min:"/>
+	<str id="panel0.field4.label"
+		txt="Max:"/>
+	<str id="panel0.field4.description">
+Wählen Sie hier den Account aus, unter dem der Tomcat ausgeführt werden soll.
+	</str>
+	<str id="panel0.field4.label"
+		txt="Benutzeraccount:"/>
+</langpack>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<userInput>
+	<panel order="0">
+		<field type="title" 
+			id="panel0.title" 
+			size="1" 
+			bold="true"/>
+		<field type="rule" 
+			variable="dorado_tomcat_home">
+			<description id="panel0.field1.description"/>
+  			<spec id="panel0.field1.label" 
+  				set="0:$INSTALL_PATH/tomcat/$tomcat_version/home" 
+  				layout="O:30:255"/>
+		</field>
+		<space/>
+		<field type="rule" 
+			variable="dorado_tomcat_base">
+			<description id="panel0.field2.description"/>
+  			<spec id="panel0.field2.label" 
+  				set="0:$INSTALL_PATH/tomcat/$tomcat_version/base/default" 
+  				layout="O:30:255"/>
+		</field>
+		<divider/>
+		<field type="rule" 
+			variable="dorado_memory_min">
+			<description id="panel0.field3.description"/>
+  			<spec id="panel0.field3.label" 
+  				set="0:64" 
+  				layout="N:10:4 MB"/>
+		</field>
+		<field type="rule" 
+			variable="dorado_memory_max">
+  			<spec id="panel0.field4.label" 
+  				set="0:128" 
+  				layout="N:10:4 MB"/>
+		</field>
+		<field type="combo" 
+			variable="dorado_tomcat_user">
+			<os family="unix"/>
+  			<description id="panel0.field4.description"/>
+  			<spec id="panel0.field4.label">
+  				<choice 
+  					processor="com.izforge.izpack.util.UnixUserProcessor" 
+  					set="nobody"/>
+			</spec>
+		</field>
+	</panel>
+</userInput>

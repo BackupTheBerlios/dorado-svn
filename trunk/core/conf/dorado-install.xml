@@ -1,0 +1,365 @@
+<project
+	basedir=".."
+	default="install"
+	name="Dorado Installer">
+
+    <property file="conf/dorado.izpack.properties"/>
+	<property file="conf/dorado.properties"/>
+	
+	<property environment="env"/>
+	
+    <!-- ================================= 
+          target: install              
+         ================================= -->
+    <target 
+    	name="install" 
+    	depends="-platform_name, -path_setter"
+    	description="--> Installs the dorado">
+    	
+    	<antcall target="-extracting_tomcat"/>
+
+    	<antcall target="-install-wrapper"/>
+    	       
+    	<condition property="user.privileged">
+    		<or>
+    			<os family="dos"/>
+    			<equals arg1="${user.name}" 
+    				arg2="root"
+    				trim=""/>
+    		</or>
+    	</condition>
+    	<antcall target="-install_service"/>
+    	<antcall target="-start"/>
+    </target>
+	
+	
+	
+    <!-- ================================= 
+          target: uninstall              
+         ================================= -->
+    <target 
+    	name="uninstall" 
+    	depends="-platform_name, -path_setter" 
+    	description="--> Uninstall the Dorado files">
+        
+    	<echo>
+    		The uninstall process only removes the systemintegration
+    		and do not delete any files. You can delete the directories
+    		${dorado.tomcat.base} and 
+    		${dorado.tomcat.home} manually.
+    	</echo>
+    	
+    	<antcall target="-stop"/>
+    	
+    	<condition property="user.privileged">
+    		<or>
+    			<os family="dos"/>
+    			<equals arg1="${user.name}" 
+    				arg2="root"
+    				trim=""/>
+    		</or>
+    	</condition>
+    	<antcall target="-uninstall_service"/>    	
+    </target>
+
+
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -start                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-start">
+     	<description>
+     		Starts the Tomcat-Server
+     	</description>
+    	
+    	<condition property="shell.ext" value="bat">
+    		<os family="dos"/>
+    	</condition>
+    	<property name="shell.ext" value="sh"/>
+    	
+    	<exec 
+    	   executable="${dorado.tomcat.base}/bin/wrapper.${shell.ext}">
+    	   <arg line="restart"/>
+    	</exec>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: -stop                     
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-stop">
+     	<description>
+     		Stops the Tomcat-Server
+     	</description>
+    	
+    	<condition property="shell.ext" value="bat">
+    		<os family="dos"/>
+    	</condition>
+    	<property name="shell.ext" value="sh"/>
+    	
+    	<exec 
+    	   executable="${dorado.tomcat.base}/bin/wrapper.${shell.ext}">
+    	   <arg line="stop"/>
+    	</exec>
+    </target>
+
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -install_service                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-install_service" if="user.privileged">
+		<description>
+    		Installs the service and starts the Tomcat
+    	</description>            
+    	
+    	<condition property="install.script" value="wrapper.bat">
+    	 	<os family="dos"/>
+    	</condition>
+    	<property name="install.script" value="tomcat_service.sh"/>
+    	
+    	<exec 
+    		executable="${dorado.tomcat.base}/bin/${install.script}">
+    		<arg line="install"/>
+    	</exec>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: -uninstall_service                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-uninstall_service" if="user.privileged">
+		<description>
+    		Installs the service and starts the Tomcat
+    	</description>            
+    	
+    	<condition property="install.script" value="wrapper.bat">
+    	 	<os family="dos"/>
+    	</condition>
+    	<property name="install.script" value="tomcat_service.sh"/>
+    	
+    	<exec 
+    		executable="${dorado.tomcat.base}/bin/${install.script}">
+    		<arg line="uninstall"/>
+    	</exec>
+    </target>
+
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -install-wrapper                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-install-wrapper">
+		<description>
+			Installs the wrapper files to integrate the Tomcat
+			into the system
+		</description>
+
+    	<touch file="conf/dorado.izpack.properties"/>
+    	<filterset id="properties">
+    		<filtersfile file="conf/dorado.properties"/>
+    		<filtersfile file="conf/dorado.izpack.properties"/>
+    		<filter token="java.home" value="${java.home}"/>
+    		<filter token="dorado.tomcat.home" value="${dorado.tomcat.home}"/>
+    		<filter token="dorado.tomcat.base" value="${dorado.tomcat.base}"/>
+    	</filterset>
+    	
+    	
+    	<copy 
+    		todir="${dorado.tomcat.base}/bin"
+    		filtering="true"
+    		overwrite="true">
+    		<filterset refid="properties"/>
+    		<fileset dir="wrapper/${platform.name}/${dorado.internal.wrapper.bin.dir}">
+    			<include name="*.sh"/>
+    			<include name="*.bat"/>
+    		</fileset>
+    	</copy>
+    	
+    	<copy 
+			todir="${dorado.tomcat.base}/bin"
+			overwrite="true">
+			<fileset dir="wrapper/${platform.name}/${dorado.internal.wrapper.bin.dir}">
+				<exclude name="*.sh"/>
+				<exclude name="*.bat"/>
+			</fileset>
+		</copy>
+    	
+    	<copy 
+			todir="${dorado.tomcat.base}/conf"
+    		filtering="true"
+			overwrite="true">
+    		<filterset refid="properties"/>
+			<fileset dir="wrapper/${platform.name}/${dorado.internal.wrapper.conf.dir}">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+    	
+    	<copy 
+			todir="${dorado.tomcat.home}/server/lib"
+			overwrite="true">
+			<fileset dir="wrapper/${platform.name}/${dorado.internal.wrapper.lib.dir}">
+				<include name="*.*"/>
+			</fileset>
+		</copy> 
+    	
+    	<chmod perm="ugo+x">
+    		<fileset dir="${dorado.tomcat.base}/bin">
+    			<include name="*.sh"/>
+    			<include name="wrapper.bin"/>
+    		</fileset>
+    		<fileset dir="${dorado.tomcat.home}/server/lib">
+    			<include name="*.so"/>
+    		</fileset>
+    	</chmod>
+    </target>
+	
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -extracting_tomcat                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-extracting_tomcat">
+		<description>
+    		Extracting the downloaded tomcat
+    	</description>
+    	
+    	<mkdir dir="${dorado.tomcat.home}"/>
+    	<copy todir="${dorado.tomcat.home}" 
+    		overwrite="true">
+    		<fileset dir="tomcat">
+    			<include name="server/**"/>
+    			<include name="common/**"/>  
+    			<include name="LICENSE"/>
+    			<include name="NOTICE"/>
+    			<include name="RELEASE-NOTES"/>
+   				<include name="RUNNING.txt"/>
+    		</fileset>
+    	</copy>
+    	
+    	<mkdir dir="${dorado.tomcat.base}"/>
+    	<copy todir="${dorado.tomcat.base}" 
+    		overwrite="true">
+    		<fileset dir="tomcat">
+    			<include name="bin/**"/>
+    			<include name="conf/**"/>  
+    			<include name="logs/**"/>  
+    			<include name="shared/**"/>  
+    			<include name="temp/**"/>  
+    			<include name="webapps/**"/>  
+    			<include name="work/**"/>  
+    		</fileset>
+    	</copy>
+    	
+    	<chmod perm="ugo+x">
+    		<fileset dir="${dorado.tomcat.base}/bin">
+    			<include name="*.sh"/>
+    		</fileset>
+    	</chmod>
+    </target>
+
+
+
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -check                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-check">
+		<condition property="basedir.not.set">
+			<or>
+				<not>
+					<isset property="dorado.tomcat.home"/>
+				</not>
+				<equals arg1="${dorado.tomcat.home}"
+					arg2=""
+					trim="true"/>
+			</or>
+		</condition>
+    	<antcall target="-basedir_check_fails"/>
+    </target>
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -basedir_check_fails                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-basedir_check_fails" if="basedir.not.set">
+    	<fail 
+    		message="The Tomcat home directory is not set in dorado.properties."/>        
+    </target>
+
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -platform_name                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-platform_name">
+		<description>
+    		Sets the name of the os
+    	</description>
+    	
+    	<condition property="pn" value="win32">
+    		<or>
+    			<os family="dos"/>
+    			<os family="windows"/>
+    			<os family="win9x"/>
+    		</or>
+    	</condition>
+    	
+    	<condition property="pn" value="solaris">
+    		<or>
+    			<os name="Solaris"/>
+    			<os name="SunOS"/>
+    		</or>
+    	</condition>
+    	
+    	<condition property="pn" value="linux">
+    		<or>
+    			<os name="Linux"/>
+    		</or>
+    	</condition>
+    	
+    	<condition property="pn" value="mac">
+			<or>
+				<os family="mac"/>
+			</or>
+		</condition>
+    	<property name="platform.name" value="${pn}"/>
+    </target>
+	
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -path_setter                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="-path_setter">
+		<description>
+			Sets all path to set automatically
+		</description>
+
+    	<property name="dorado.tomcat.home"
+    		location="${basedir}/../tomcat/${dorado.tomcat.version}"/>
+    	
+    	<condition property="dorado.tomcat.base"
+    		value="${dorado.tomcat.home}">
+    		<equals arg1="${dorado.tomcat.base.helper}"
+    			arg2=""
+    			trim="true"/>
+    	</condition>
+    	
+    	<condition property="dorado.tomcat.base"
+    		value="${dorado.tomcat.base.helper}">
+    		<and>
+    			<not>
+    				<equals arg1="${dorado.tomcat.base.helper}"
+    					arg2=""
+    					trim="true"/>
+    			</not>
+    			<isset property="dorado.tomcat.base.helper"/>
+    		</and>
+    	</condition>
+    	
+		<property name="dorado.tomcat.base"
+    		value="${dorado.tomcat.home}"/>
+    </target>
+
+
+</project>
