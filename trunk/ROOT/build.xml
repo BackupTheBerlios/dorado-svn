@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE project [
+	<!ENTITY common-targets SYSTEM "file:../ROOT/common-targets.ent">
+]>
+
+<project
+	name="Dorado"
+	basedir=".."
+	default="dist">
+
+	<property name="module.name" value="ROOT"/>
+	<property file="${module.name}/project_local.properties"/>
+	<property file="${module.name}/project.properties"/>
+	
+    <!-- ================================= 
+          target: build              
+         ================================= -->
+    <target 
+    	name="build" 
+    	depends="-init" 
+    	description="--> Builds the project">
+        
+    </target>
+	
+	
+	
+    <!-- ================================= 
+          target: dist              
+         ================================= -->
+    <target 
+    	name="dist" 
+    	depends="build" 
+    	description="--> Builds the distribution">
+        
+    	<ant antfile="core/build.xml"
+    		target="dist"
+    		inheritall="false"
+    		inheritrefs="false"/>
+    	
+    </target>
+	
+	
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" 
+    	depends="-clean-directory-layout"
+    	description="--> Cleans all generated resourcen">
+        
+    </target>
+
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: -init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target 
+    	name="-init"
+    	depends="-create_directory_layout">
+            
+    	
+    </target>
+	
+	
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: init-repository                      
+         - - - - - - - - - - - - - - - - - -->
+    <target 
+    	name="init-repository"
+    	depends="-create_directory_layout, -depedencies"
+    	description="--> Resolves all depedencies">
+            
+    	<!-- Remove some useless files out of the current
+    		tomcat repository -->
+    	<delete includeemptydirs="true">
+    		<fileset dir="${project.repository.dir}/tomcat/jakarta-tomcat-${project.tomcat.version}">
+    			<include name="bin/commons-daemon.jar"/>
+    			<include name="bin/jsvc.tar.gz"/>
+    			<include name="bin/*.exe"/>
+    			<include name="conf/jk2.*"/>
+    			<include name="conf/tomcat-jk2.*"/>
+    			<include name="conf/workers2.*"/>
+    		</fileset>
+    	</delete>
+    	
+    	<cvs 
+    		cvsRoot=":pserver:anonymous@cvs.izpack.berlios.de:/cvsroot/izpack"
+    	    package="izpack-src"
+    	    dest="${project.repository.dir}/izpack"/>
+    	<copy todir="${project.repository.dir}/izpack/izpack-src/src/lib/com/izforge/izpack/util">
+    		<fileset dir="${module.name}/patches">
+    			<include name="UnixGroupProcessor.java"/>
+    			<include name="UnixUserProcessor.java"/>
+    		</fileset>
+    	</copy>
+    	<ant antfile="${project.repository.dir}/izpack/izpack-src/src/build.xml"
+    		target="dist"
+    		inheritall="false"
+    		inheritrefs="false"/>
+    </target>
+
+
+	
+    <!-- ================================= 
+          target: update-repository              
+         ================================= -->
+    <target 
+    	name="update-repository" 
+    	depends="init-repository" 
+    	description="--> Updates this repository">
+        
+    </target>
+
+
+
+	&common-targets;
+</project>
