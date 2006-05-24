@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.fornax</groupId>
+  <artifactId>fornax-misc-site-theme</artifactId>
+  <version>1.0.0</version>
+  <description>This the main theme used by all subproject of fornax</description>
+  
+  <organization>
+		<name>Fornax Development Team</name>
+		<url>http://fornax.sourceforge.net/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>thorque</id>
+			<name>Thorsten Kamann</name>
+			<email>thorsten.kamann@googlemail.com</email>
+			<organization>Fornax Development Team</organization>
+			<organizationUrl>http://fornax.sourceforge.net/</organizationUrl>
+			<roles>
+				<role>Project-Administrator</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	<issueManagement>
+		<system>Sourceforge Bugtracker</system>
+		<url>
+			http://sourceforge.net/tracker/?group_id=166970&amp;atid=841078
+		</url>
+	</issueManagement>
+	<scm>
+		<connection>
+			scm:svn:https://svn.sourceforge.net/svnroot/fornax/fornax.misc.site.theme
+		</connection>
+		<developerConnection>
+			scm:svn:https://svn.sourceforge.net/svnroot/fornax/fornax.misc.site.theme
+		</developerConnection>
+		<url>
+			http://svn.sourceforge.net/viewcvs.cgi/fornax/trunk/fornax.misc.site.theme/
+		</url>
+	</scm>
+	
+  <distributionManagement>
+		<repository>
+			<id>fornax.sourceforge.net</id>
+			<url>
+				sftp://shell.sf.net:/home/groups/f/fo/fornax/m2/repository/
+			</url>
+		</repository>
+	</distributionManagement>
+</project>
