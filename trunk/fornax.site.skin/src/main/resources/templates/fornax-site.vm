@@ -91,6 +91,7 @@
   #set ( $collapse = "none" )
   #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
   #set ( $currentItemHref = $currentItemHref.replaceAll( "\\", "/" ) )
+  
 
   #if ( $item && $item.items && $item.items.size() > 0 )
     #if ( $item.collapse == false )
@@ -107,6 +108,7 @@
       #set ( $collapse = "expanded" )
     #end
   #end
+  
   <li class="$collapse">
     #if ( $item.img )
       #if ( ! ( $item.img.toLowerCase().startsWith("http") || $item.img.toLowerCase().startsWith("https") ) )
@@ -120,7 +122,14 @@
     #if ( $alignedFileName == $currentItemHref )
       <strong>$item.name</strong>
     #else
-      <a href="$currentItemHref">$item.name</a>
+    	 #if ($currentItemHref.toLowerCase().startsWith("http") || $currentItemHref.toLowerCase().startsWith("https"))
+    	 	#if ( ! $item.img )
+    	 			   <img src="images/icons/external.png" align="absbottom" style="border-width: 0"/>	
+    	 	#end
+    	  	<a href="$currentItemHref" title="$item.name" target="_blank">$item.name</a>
+    	 #else
+      <a href="$currentItemHref" title="$item.name">$item.name</a>
+     #end
     #end
   #if ( $item && $item.items && $item.items.size() > 0 )
     #if ( $collapse == "expanded" )
